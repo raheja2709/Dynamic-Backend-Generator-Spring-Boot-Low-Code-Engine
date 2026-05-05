@@ -20,5 +20,5 @@ package com.user.driven.operations.enums;
  * @author Jatin Raheja
  */
 public enum FieldType {
-	PRIMARY_KEY, FOREIGN_KEY, NORMAL_FIELD, UNIQUE_FIELD, INDEX_FIELD
+	PRIMARY_KEY, FOREIGN_KEY, NORMAL_FIELD, UNIQUE_FIELD, INDEX_FIELD, NORMAL
 }
