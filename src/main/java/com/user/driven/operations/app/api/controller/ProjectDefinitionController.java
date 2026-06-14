@@ -3,7 +3,7 @@ package com.user.driven.operations.app.api.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,13 +37,12 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(AppConstants.projects)
 @Tag(name = "Project Management", description = "APIs for managing project definitions")
+@RequiredArgsConstructor
 public class ProjectDefinitionController {
 
-	@Autowired
-	private ProjectDefinitionService projectService;
+	private final ProjectDefinitionService projectService;
 
-	@Autowired
-	private ProjectGenerationService generationService;
+	private final ProjectGenerationService generationService;
 
 	/**
 	 * Creates a new project.
