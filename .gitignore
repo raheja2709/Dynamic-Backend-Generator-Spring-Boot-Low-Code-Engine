@@ -41,3 +41,8 @@ TEST-*.xml
 # ======================
 .DS_Store
 Thumbs.db
+
+# ======================
+# Generated project output
+# ======================
+generated-projects/

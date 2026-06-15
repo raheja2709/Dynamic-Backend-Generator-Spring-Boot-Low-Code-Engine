@@ -39,13 +39,20 @@ public class BuildVerifier {
                 log.info("Using Maven Wrapper for build verification: {}", command);
             } else {
                 // Fallback to configured Maven executable
+                // On Windows, append .cmd if not already specified
                 command = mavenExecutable;
+                if (isWindows && !command.endsWith(".cmd") && !command.endsWith(".bat") && !command.contains("\\")) {
+                    command = command + ".cmd";
+                }
                 log.info("No Maven Wrapper found, using configured Maven executable: {}", command);
             }
 
-            ProcessBuilder pb = new ProcessBuilder(
-                    command, "clean", "compile"
-            );
+            ProcessBuilder pb;
+            if (isWindows) {
+                pb = new ProcessBuilder("cmd", "/c", command, "clean", "compile", "-q");
+            } else {
+                pb = new ProcessBuilder(command, "clean", "compile", "-q");
+            }
 
             pb.directory(projectDir);
             pb.inheritIO();

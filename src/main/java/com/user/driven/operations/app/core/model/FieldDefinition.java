@@ -1,8 +1,10 @@
 package com.user.driven.operations.app.core.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.user.driven.operations.enums.DataType;
 import com.user.driven.operations.enums.FieldType;
 
+import com.user.driven.operations.enums.RelationshipType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -79,7 +81,9 @@ public class FieldDefinition {
 	/**
 	 * Specifies the type of relationship (e.g., OneToMany, ManyToOne).
 	 */
-	private String relationshipType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "relationship_type")
+    private RelationshipType relationshipType;
 
 	/**
 	 * Specifies the target entity of the relationship, if any.
@@ -100,6 +104,7 @@ public class FieldDefinition {
 	 * The entity to which this field belongs.
 	 */
 	@NotNull
+	@JsonBackReference("entity-fields")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "entity_id")
 	private EntityDefinition entity;

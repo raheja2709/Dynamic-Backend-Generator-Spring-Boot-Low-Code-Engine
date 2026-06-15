@@ -1,5 +1,6 @@
 package com.user.driven.operations.app.core.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.user.driven.operations.enums.OperationType;
 
 import jakarta.persistence.Column;
@@ -71,6 +72,7 @@ public class OperationConfig {
 	 * The entity to which this operation configuration belongs.
 	 */
 	@NotNull
+	@JsonBackReference("entity-operations")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "entity_id")
 	private EntityDefinition entity;
