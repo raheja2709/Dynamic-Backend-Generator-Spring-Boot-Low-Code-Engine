@@ -1,0 +1,43 @@
+# ======================
+# Maven build output
+# ======================
+/target/
+
+# If target is nested somewhere (safety net)
+**/target/**
+
+# ======================
+# Compiled files
+# ======================
+*.class
+
+# ======================
+# Test reports (surefire)
+# ======================
+**/surefire-reports/
+*.dumpstream
+TEST-*.xml
+*.txt
+
+# ======================
+# Maven status files
+# ======================
+**/maven-status/
+
+# ======================
+# IntelliJ / IDE files
+# ======================
+.idea/
+*.iml
+
+# ======================
+# Generated resources inside target (extra safety)
+# ======================
+**/target/classes/
+**/target/test-classes/
+
+# ======================
+# OS / misc
+# ======================
+.DS_Store
+Thumbs.db
