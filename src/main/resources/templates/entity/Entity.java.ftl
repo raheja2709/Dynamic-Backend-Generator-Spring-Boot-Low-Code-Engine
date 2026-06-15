@@ -1,6 +1,22 @@
 package ${project.packageName}.model;
 
 import jakarta.persistence.*;
+<#list entity.fields as field>
+<#if field.relationshipType??>
+import ${project.packageName}.model.${field.relationshipTarget};
+</#if>
+</#list>
+<#assign hasRelationship = false>
+
+<#list entity.fields as field>
+    <#if field.relationshipType?? && field.relationshipType?has_content>
+        <#assign hasRelationship = true>
+    </#if>
+</#list>
+
+<#if hasRelationship>
+import java.util.List;
+</#if>
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -61,32 +77,74 @@ public class ${entity.name?cap_first} {
     @Column(unique = true)
     </#if>
 
-    <#-- @NotNull if not nullable and not a primary key -->
-    <#if !field.nullable && !isPrimaryKey>
-    @NotNull
-    </#if>
+    <#-- Apply validation only for normal fields, not relationships -->
+    <#if !(field.relationshipType?? && field.relationshipType?has_content)>
 
-    <#-- @Email -->
-    <#if hasEmail>
-    @Email
-    </#if>
-
-    <#-- @Size or @Min/@Max -->
-    <#if needsSize && (minVal != "" || maxVal != "")>
-    @Size(<#if minVal != "">min = ${minVal}</#if><#if minVal != "" && maxVal != "">, </#if><#if maxVal != "">max = ${maxVal}</#if>)
-    </#if>
-
-    <#if needsMinMax>
-        <#if minVal != "">
-    @Min(${minVal})
+        <#-- @NotNull if not nullable and not a primary key -->
+        <#if !field.nullable && !isPrimaryKey>
+        @NotNull
         </#if>
-        <#if maxVal != "">
-    @Max(${maxVal})
+
+        <#-- @Email -->
+        <#if hasEmail>
+        @Email
         </#if>
+
+        <#-- @Size -->
+        <#if needsSize && (minVal != "" || maxVal != "")>
+        @Size(
+            <#if minVal != "">min = ${minVal}</#if>
+            <#if minVal != "" && maxVal != "">, </#if>
+            <#if maxVal != "">max = ${maxVal}</#if>
+        )
+        </#if>
+
+        <#-- Numeric validations -->
+        <#if needsMinMax>
+            <#if minVal != "">
+        @Min(${minVal})
+            </#if>
+
+            <#if maxVal != "">
+        @Max(${maxVal})
+            </#if>
+        </#if>
+
     </#if>
+
+<#if field.relationshipType??>
+
+    <#switch field.relationshipType?string>
+
+        <#case "MANY_TO_ONE">
+    @ManyToOne
+    @JoinColumn(name="${field.name?lower_case}_id")
+    private ${field.relationshipTarget} ${field.name?uncap_first};
+            <#break>
+
+        <#case "ONE_TO_ONE">
+    @OneToOne
+    @JoinColumn(name="${field.name?lower_case}_id")
+    private ${field.relationshipTarget} ${field.name?uncap_first};
+            <#break>
+
+        <#case "ONE_TO_MANY">
+    @OneToMany(mappedBy="${entity.name?uncap_first}")
+    private List<${field.relationshipTarget}> ${field.name?uncap_first};
+            <#break>
+
+        <#case "MANY_TO_MANY">
+    @ManyToMany
+    private List<${field.relationshipTarget}> ${field.name?uncap_first};
+            <#break>
+
+    </#switch>
+
+<#else>
 
     private ${getJavaType(field.dataType)} ${field.name?uncap_first};
 
+</#if>
 </#list>
 }
 

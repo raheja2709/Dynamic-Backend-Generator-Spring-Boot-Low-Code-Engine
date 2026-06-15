@@ -38,8 +38,14 @@ public class ProjectGenerator {
         );
 
         if (project.isSecurityEnabled()) {
-            securityFactory.get(project.getSecurityType())
-                    .generate(project, path);
+            var generator = securityFactory.get(project.getSecurityType());
+            if (generator != null) {
+                generator.generate(project, path);
+            } else {
+                throw new RuntimeException(
+                        "No security generator available for type: " + project.getSecurityType() +
+                        ". Supported types: JWT. Set securityEnabled=false or use a supported type.");
+            }
         }
     }
 }

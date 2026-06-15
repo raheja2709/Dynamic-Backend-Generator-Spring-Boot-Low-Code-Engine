@@ -17,4 +17,5 @@ public abstract class BaseGenerator {
         String content = engine.process(template, model);
         writer.write(path, content);
     }
+
 }

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,6 +68,7 @@ public class EntityDefinition {
 	 * The project to which this entity belongs.
 	 */
 	@NotNull
+	@JsonBackReference("project-entities")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
 	private ProjectDefinition project;
@@ -73,6 +77,7 @@ public class EntityDefinition {
 	 * List of fields defined for this entity. Mapped with cascading and orphan
 	 * removal.
 	 */
+	@JsonManagedReference("entity-fields")
 	@OneToMany(mappedBy = "entity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<FieldDefinition> fields = new ArrayList<>();
 
@@ -80,6 +85,7 @@ public class EntityDefinition {
 	 * List of operations configured for this entity (e.g., CREATE, UPDATE). Mapped
 	 * with cascading and orphan removal.
 	 */
+	@JsonManagedReference("entity-operations")
 	@OneToMany(mappedBy = "entity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<OperationConfig> operations = new ArrayList<>();
 

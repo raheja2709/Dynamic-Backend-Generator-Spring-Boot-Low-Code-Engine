@@ -7,6 +7,8 @@ import java.util.List;
 import com.user.driven.operations.enums.DatabaseType;
 import com.user.driven.operations.enums.SecurityType;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -108,6 +110,7 @@ public class ProjectDefinition {
 	/**
 	 * List of entities associated with this project.
 	 */
+	@JsonManagedReference("project-entities")
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<EntityDefinition> entities = new ArrayList<>();
 
