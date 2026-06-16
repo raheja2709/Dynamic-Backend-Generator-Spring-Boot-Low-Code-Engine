@@ -54,21 +54,21 @@ This plan transforms the Dynamic Backend Generator from a prototype into a produ
     - Ensure migration failure prevents application startup
     - _Requirements: 2.3, 2.5, 2.6_
 
-- [ ] 3. Multi-Environment Configuration
+- [x] 3. Multi-Environment Configuration
   - [x] 3.1 Create application-dev.yml, application-prod.yml, and application-docker.yml profile configurations
     - Dev: H2 in-memory, port 8083, create-drop, Flyway disabled
     - Prod: PostgreSQL, port 8080, validate, Flyway enabled
     - Docker: PostgreSQL with service name "db" as hostname, port 8080, validate, Flyway enabled
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-  - [ ] 3.2 Create AppProperties class with @ConfigurationProperties and externalize environment variables
+  - [x] 3.2 Create AppProperties class with @ConfigurationProperties and externalize environment variables
     - Define `app.generated-projects-directory` (default: `./generated-projects`)
     - Define `app.maven-executable` (default: `mvn`)
     - Externalize DB URL, username, password with `${ENV_VAR:default}` pattern
     - Default profile to dev when none specified
     - _Requirements: 3.5, 3.6, 3.8_
 
-  - [ ] 3.3 Create .env.example file and add startup validation for required variables in prod/docker
+  - [x] 3.3 Create .env.example file and add startup validation for required variables in prod/docker
     - List every externalized environment variable with description and default
     - Add startup validation that fails with descriptive error for missing required variables
     - _Requirements: 3.7, 3.9_
