@@ -1,5 +1,6 @@
 package com.user.driven.operations.generator.orchestrator;
 
+import com.user.driven.operations.app.common.exception.UnsupportedSecurityTypeException;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.generator.module.EntityModuleGenerator;
 import com.user.driven.operations.generator.project.ApplicationGenerator;
@@ -42,9 +43,8 @@ public class ProjectGenerator {
             if (generator != null) {
                 generator.generate(project, path);
             } else {
-                throw new RuntimeException(
-                        "No security generator available for type: " + project.getSecurityType() +
-                        ". Supported types: JWT. Set securityEnabled=false or use a supported type.");
+                throw new UnsupportedSecurityTypeException(
+                        project.getSecurityType() != null ? project.getSecurityType().name() : "null");
             }
         }
     }

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.user.driven.operations.app.api.dto.ProjectDefinitionDto;
+import com.user.driven.operations.app.common.exception.DuplicateNameException;
+import com.user.driven.operations.app.common.exception.ProjectNotFoundException;
 import com.user.driven.operations.app.core.model.EntityDefinition;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.app.api.mapper.DtoMapper;
@@ -42,7 +44,7 @@ public class ProjectDefinitionServiceImpl implements ProjectDefinitionService {
 	@Override
 	public ProjectDefinition createProject(ProjectDefinitionDto projectDto) {
 		if (existsByName(projectDto.getName())) {
-			throw new RuntimeException("Project with name '" + projectDto.getName() + "' already exists");
+			throw new DuplicateNameException("Project", projectDto.getName());
 		}
 
 		ProjectDefinition project = dtoMapper.toEntity(projectDto);
@@ -97,10 +99,10 @@ public class ProjectDefinitionServiceImpl implements ProjectDefinitionService {
 	@Override
 	public ProjectDefinition updateProject(Long id, ProjectDefinitionDto projectDto) {
 		ProjectDefinition existingProject = projectRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
+				.orElseThrow(() -> new ProjectNotFoundException("Project", id.toString()));
 
 		if (!existingProject.getName().equals(projectDto.getName()) && existsByName(projectDto.getName())) {
-			throw new RuntimeException("Project with name '" + projectDto.getName() + "' already exists");
+			throw new DuplicateNameException("Project", projectDto.getName());
 		}
 
 		dtoMapper.updateEntityFromDto(projectDto, existingProject);
@@ -113,7 +115,7 @@ public class ProjectDefinitionServiceImpl implements ProjectDefinitionService {
 	@Override
 	public void deleteProject(Long id) {
 		if (!projectRepository.existsById(id)) {
-			throw new RuntimeException("Project not found with id: " + id);
+			throw new ProjectNotFoundException("Project", id.toString());
 		}
 		projectRepository.deleteById(id);
 	}

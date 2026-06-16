@@ -48,6 +48,11 @@ TEST-*.xml
 Thumbs.db
 
 # ======================
+# Application logs
+# ======================
+logs/
+
+# ======================
 # Generated project output
 # ======================
 generated-projects/

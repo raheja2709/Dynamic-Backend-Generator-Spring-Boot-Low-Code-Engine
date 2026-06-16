@@ -76,13 +76,13 @@ This plan transforms the Dynamic Backend Generator from a prototype into a produ
 - [ ] 4. Checkpoint - Ensure project compiles and starts in dev profile
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Custom Exception Hierarchy
-  - [ ] 5.1 Create BaseApplicationException and all custom exception classes
+- [x] 5. Custom Exception Hierarchy
+  - [x] 5.1 Create BaseApplicationException and all custom exception classes
     - Create abstract `BaseApplicationException` with resourceType, resourceIdentifier, operationStage fields
     - Create `ProjectNotFoundException`, `DuplicateNameException`, `GenerationFailedException`, `ValidationException`, `BuildVerificationException`, `UnsupportedSecurityTypeException`
     - _Requirements: 4.1, 4.6_
 
-  - [ ] 5.2 Implement GlobalExceptionHandler with consistent ErrorResponse format
+  - [x] 5.2 Implement GlobalExceptionHandler with consistent ErrorResponse format
     - Create `ErrorResponse` record with timestamp, status, errorType, message, path, requestId, fieldErrors
     - Handle MethodArgumentNotValidException → HTTP 400 with field errors
     - Handle DataIntegrityViolationException → HTTP 409
@@ -101,38 +101,38 @@ This plan transforms the Dynamic Backend Generator from a prototype into a produ
     - Verify ErrorResponse fields are populated correctly
     - _Requirements: 4.2, 4.7_
 
-- [ ] 6. Audit Logging Infrastructure
-  - [ ] 6.1 Implement RequestIdFilter for X-Request-Id generation and MDC propagation
+- [x] 6. Audit Logging Infrastructure
+  - [x] 6.1 Implement RequestIdFilter for X-Request-Id generation and MDC propagation
     - Generate UUID on each request
     - Set MDC context with requestId
     - Add X-Request-Id to response headers
     - _Requirements: 5.2_
 
-  - [ ] 6.2 Create AuditInterceptor and Audit_Log entity/repository
+  - [x] 6.2 Create AuditInterceptor and Audit_Log entity/repository
     - Create `AuditLog` JPA entity with all required fields (requestId, method, endpoint, requestBody, responseStatus, durationMs, clientIp, userAgent, generationStage)
     - Implement `HandlerInterceptor` preHandle/afterCompletion
     - Truncate request body at 10,000 chars and endpoint at 500 chars
     - _Requirements: 5.1, 5.4_
 
-  - [ ] 6.3 Implement DatabaseAppender for ERROR/WARN log persistence
+  - [x] 6.3 Implement DatabaseAppender for ERROR/WARN log persistence
     - Create `ApplicationLog` JPA entity with level, loggerName, message, stackTrace, requestId, userId, context (JSONB)
     - Implement custom Logback `AppenderBase<ILoggingEvent>` that writes to application_logs table
     - Handle appender failures gracefully (log to console, don't interrupt request)
     - _Requirements: 5.3, 5.7_
 
-  - [ ] 6.4 Configure Logback with console, rolling-file, and database appenders
+  - [x] 6.4 Configure Logback with console, rolling-file, and database appenders
     - Console appender for all profiles
     - Rolling-file: max 10 MB per file, 30 days retention
     - JSON format for prod/docker profiles
     - Database appender for ERROR/WARN
     - _Requirements: 5.6_
 
-  - [ ] 6.5 Implement scheduled cleanup job for audit and application logs older than 30 days
+  - [x] 6.5 Implement scheduled cleanup job for audit and application logs older than 30 days
     - Create `@Scheduled` method running daily
     - Delete AuditLog and ApplicationLog records older than configurable retention
     - _Requirements: 5.5_
 
-  - [ ] 6.6 Create Flyway V4 migration for audit_logs and application_logs tables
+  - [x] 6.6 Create Flyway V4 migration for audit_logs and application_logs tables
     - Define audit_logs and application_logs table schemas
     - Add indexes on request_id and created_at columns
     - _Requirements: 5.1, 5.3_
