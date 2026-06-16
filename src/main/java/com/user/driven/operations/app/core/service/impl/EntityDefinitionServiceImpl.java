@@ -3,7 +3,7 @@ package com.user.driven.operations.app.core.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,22 +26,18 @@ import com.user.driven.operations.app.core.service.EntityDefinitionService;
  */
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 
-	@Autowired
-	private OperationConfigRepository operationRepository;
+	private final OperationConfigRepository operationRepository;
 
-	@Autowired
-	private FieldDefinitionRepository fieldRepository;
+	private final FieldDefinitionRepository fieldRepository;
 
-	@Autowired
-	private EntityDefinitionRepository entityRepository;
+	private final EntityDefinitionRepository entityRepository;
 
-	@Autowired
-	private ProjectDefinitionRepository projectRepository;
+	private final ProjectDefinitionRepository projectRepository;
 
-	@Autowired
-	private DtoMapper dtoMapper;
+	private final DtoMapper dtoMapper;
 
 	/**
 	 * {@inheritDoc}

@@ -5,6 +5,7 @@ import com.user.driven.operations.app.api.mapper.ProjectMapper;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.app.core.service.ProjectGenerationService;
 
+import jakarta.validation.Valid;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class GeneratorController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<FileSystemResource> generate(@RequestBody GenerateProjectRequest request) {
+    public ResponseEntity<FileSystemResource> generate(@Valid @RequestBody GenerateProjectRequest request) {
 
         ProjectDefinition project = ProjectMapper.map(request);
 

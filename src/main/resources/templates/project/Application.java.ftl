@@ -10,9 +10,9 @@ import org.springframework.cache.annotation.EnableCaching;
 <#if project.cachingEnabled>
 @EnableCaching
 </#if>
-public class ${project.name?replace(" ", "")?cap_first}Application {
+public class ${applicationClassName} {
 
     public static void main(String[] args) {
-        SpringApplication.run(${project.name?replace(" ", "")?cap_first}Application.class, args);
+        SpringApplication.run(${applicationClassName}.class, args);
     }
 }

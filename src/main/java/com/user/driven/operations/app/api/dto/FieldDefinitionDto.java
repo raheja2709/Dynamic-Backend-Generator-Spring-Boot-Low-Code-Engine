@@ -3,6 +3,7 @@ package com.user.driven.operations.app.api.dto;
 import com.user.driven.operations.enums.DataType;
 import com.user.driven.operations.enums.FieldType;
 
+import com.user.driven.operations.enums.RelationshipType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,7 @@ public class FieldDefinitionDto {
 	/**
 	 * The type of relationship if the field is a foreign key (e.g., ONE_TO_MANY).
 	 */
-	private String relationshipType;
+    private RelationshipType relationshipType;
 
 	/**
 	 * The target entity name for the relationship (used with relationshipType).

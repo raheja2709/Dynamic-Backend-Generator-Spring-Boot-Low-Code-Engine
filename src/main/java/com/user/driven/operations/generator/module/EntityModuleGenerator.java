@@ -5,11 +5,13 @@ import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.generator.core.BaseGenerator;
 import com.user.driven.operations.generator.core.FileWriterService;
 import com.user.driven.operations.generator.core.TemplateEngine;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class EntityModuleGenerator extends BaseGenerator {
 
@@ -18,16 +20,19 @@ public class EntityModuleGenerator extends BaseGenerator {
     }
 
     public void generate(ProjectDefinition project, EntityDefinition entity, Path basePath) {
+        log.info("Starting entity generation for entity={}",
+                entity.getName());
 
         String pkg = project.getPackageName().replace(".", "/");
-
+        log.info("Resolved package path={}", pkg);
         Map<String, Object> model = Map.of(
                 "project", project,
                 "entity", entity
         );
 
         Path base = basePath.resolve("src/main/java/" + pkg);
-
+        log.info("Resolved base source path={}",
+                base);
         generate("entity/Entity.java.ftl", model,
                 base.resolve("model/" + entity.getName() + ".java"));
 
