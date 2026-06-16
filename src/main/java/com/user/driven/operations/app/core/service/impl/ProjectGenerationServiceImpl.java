@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.user.driven.operations.app.common.util.ZipUtil;
+import com.user.driven.operations.app.config.AppProperties;
 import com.user.driven.operations.generator.core.BuildVerifier;
 import com.user.driven.operations.generator.orchestrator.ProjectGenerator;
 import com.user.driven.operations.generator.project.ProjectValidator;
@@ -27,11 +28,14 @@ public class ProjectGenerationServiceImpl implements ProjectGenerationService {
     private final ProjectGenerator generator;
     private final ProjectValidator validator;
     private final BuildVerifier buildVerifier;
+    private final AppProperties appProperties;
 
-    public ProjectGenerationServiceImpl(ProjectGenerator generator, ProjectValidator validator, BuildVerifier buildVerifier) {
+    public ProjectGenerationServiceImpl(ProjectGenerator generator, ProjectValidator validator,
+                                        BuildVerifier buildVerifier, AppProperties appProperties) {
         this.generator = generator;
         this.validator = validator;
         this.buildVerifier = buildVerifier;
+        this.appProperties = appProperties;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class ProjectGenerationServiceImpl implements ProjectGenerationService {
 
         validator.validate(project);
 
-        Path output = Paths.get("generated-projects", project.getName());
+        Path output = Paths.get(appProperties.getGeneratedProjectsDirectory(), project.getName());
 
         generator.generate(project, output);
 

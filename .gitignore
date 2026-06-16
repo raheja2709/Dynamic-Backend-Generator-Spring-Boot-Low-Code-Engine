@@ -37,6 +37,11 @@ TEST-*.xml
 **/target/test-classes/
 
 # ======================
+# Environment variables (secrets)
+# ======================
+.env
+
+# ======================
 # OS / misc
 # ======================
 .DS_Store
