@@ -357,6 +357,29 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles authentication failures (invalid credentials, disabled/locked accounts).
+     * Returns HTTP 401 with a generic error message.
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailed(
+            AuthenticationFailedException ex, HttpServletRequest request) {
+
+        log.warn("Authentication failed for request {}: {}", getRequestPath(request), ex.getMessage());
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                "AUTHENTICATION_FAILED",
+                ex.getMessage(),
+                request,
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .header(REQUEST_ID_HEADER, getRequestId())
+                .body(response);
+    }
+
+    /**
      * Generic fallback handler for any unhandled exceptions.
      * Returns a generic message without exposing internal details.
      */
