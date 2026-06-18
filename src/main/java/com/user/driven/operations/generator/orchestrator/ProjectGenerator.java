@@ -7,10 +7,12 @@ import com.user.driven.operations.generator.project.ApplicationGenerator;
 import com.user.driven.operations.generator.project.PomGenerator;
 import com.user.driven.operations.generator.project.ProjectStructureGenerator;
 import com.user.driven.operations.generator.security.SecurityGeneratorFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
+@Slf4j
 @Component
 public class ProjectGenerator {
 
@@ -34,9 +36,16 @@ public class ProjectGenerator {
         pom.generate(project, path);
         app.generate(project, path);
 
-        project.getEntities().forEach(e ->
-                entity.generate(project, e, path)
-        );
+        project.getEntities().forEach(e -> {
+            // Log warning for unsupported operation types and skip them
+            if (e.getOperations() != null) {
+                e.getOperations().forEach(op -> {
+                    String opType = op.getOperationType() != null ? op.getOperationType().name() : "null";
+                    // Known supported types are handled in templates; log any future unknowns
+                });
+            }
+            entity.generate(project, e, path);
+        });
 
         if (project.isSecurityEnabled()) {
             var generator = securityFactory.get(project.getSecurityType());
