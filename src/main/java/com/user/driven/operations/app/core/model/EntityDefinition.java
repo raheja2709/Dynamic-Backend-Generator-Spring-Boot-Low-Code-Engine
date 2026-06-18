@@ -82,6 +82,13 @@ public class EntityDefinition {
 	private List<FieldDefinition> fields = new ArrayList<>();
 
 	/**
+	 * List of relationship definitions for this entity. Mapped with cascading and orphan removal.
+	 */
+	@JsonManagedReference("entity-relationships")
+	@OneToMany(mappedBy = "entity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<RelationshipDefinition> relationships = new ArrayList<>();
+
+	/**
 	 * List of operations configured for this entity (e.g., CREATE, UPDATE). Mapped
 	 * with cascading and orphan removal.
 	 */

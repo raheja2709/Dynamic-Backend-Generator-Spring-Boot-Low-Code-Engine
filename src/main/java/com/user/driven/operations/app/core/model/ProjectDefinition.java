@@ -108,6 +108,12 @@ public class ProjectDefinition {
 	private String customConfiguration;
 
 	/**
+	 * Whether to generate a React frontend alongside the backend.
+	 */
+	@Column(name = "frontend_enabled")
+	private boolean frontendEnabled = false;
+
+	/**
 	 * The ID of the user who owns this project. Nullable for legacy projects.
 	 */
 	@Column(name = "user_id")
