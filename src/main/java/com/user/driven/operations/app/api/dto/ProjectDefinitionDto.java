@@ -87,6 +87,12 @@ public class ProjectDefinitionDto {
 	private boolean swaggerEnabled = true;
 
 	/**
+	 * Whether to generate a React frontend alongside the backend.
+	 */
+	@Schema(description = "Whether to generate a React frontend alongside the backend", example = "false")
+	private boolean frontendEnabled = false;
+
+	/**
 	 * Custom configuration string or script, if any.
 	 */
 	@Schema(description = "Custom configuration JSON or script")

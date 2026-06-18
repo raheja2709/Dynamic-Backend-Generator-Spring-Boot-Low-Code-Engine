@@ -18,11 +18,15 @@ public final class MessageConstants {
     public static final String ENTITY_DUPLICATE_NAME = "Entity with name '%s' already exists in this project";
     public static final String RESOURCE_DUPLICATE = "%s with name '%s' already exists";
 
-    // === Entity/Field Limits ===
+    // === Entity/Field/Relationship Limits ===
     public static final int MAX_ENTITIES_PER_PROJECT = 50;
     public static final int MAX_FIELDS_PER_ENTITY = 100;
+    public static final int MAX_RELATIONSHIPS_PER_ENTITY = 50;
     public static final String MAX_ENTITIES_EXCEEDED = "Maximum of %d entities per project exceeded. Current count: %d";
     public static final String MAX_FIELDS_EXCEEDED = "Maximum of %d fields per entity exceeded. Provided: %d";
+    public static final String MAX_RELATIONSHIPS_EXCEEDED = "Maximum of %d relationships per entity exceeded. Provided: %d";
+    public static final String INVALID_TARGET_ENTITY = "Relationship '%s' references target entity '%s' which does not exist in this project";
+    public static final String INVALID_CASCADE_TYPE = "Invalid cascade type '%s' in relationship '%s'. Valid types: ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH";
 
     // === Validation ===
     public static final String VALIDATION_FAILED = "Validation failed";

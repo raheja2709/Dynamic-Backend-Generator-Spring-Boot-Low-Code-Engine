@@ -4,6 +4,7 @@ import com.user.driven.operations.enums.DataType;
 import com.user.driven.operations.enums.FieldType;
 
 import com.user.driven.operations.enums.RelationshipType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -61,12 +62,18 @@ public class FieldDefinitionDto {
 
 	/**
 	 * The type of relationship if the field is a foreign key (e.g., ONE_TO_MANY).
+	 * @deprecated Use RelationshipDefinitionDto on EntityDefinitionDto instead.
 	 */
+	@Deprecated
+	@Schema(deprecated = true, description = "Deprecated: Use relationships on EntityDefinitionDto instead")
     private RelationshipType relationshipType;
 
 	/**
 	 * The target entity name for the relationship (used with relationshipType).
+	 * @deprecated Use RelationshipDefinitionDto on EntityDefinitionDto instead.
 	 */
+	@Deprecated
+	@Schema(deprecated = true, description = "Deprecated: Use relationships on EntityDefinitionDto instead")
 	private String relationshipTarget;
 
 	/**

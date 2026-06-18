@@ -56,4 +56,10 @@ public class EntityDefinitionDto {
 	 */
 	@Schema(description = "List of operation configurations supported by this entity")
 	private List<OperationConfigDto> operations;
+
+	/**
+	 * A list of relationship definitions for this entity.
+	 */
+	@Schema(description = "List of relationship definitions for this entity")
+	private List<RelationshipDefinitionDto> relationships;
 }
