@@ -1,26 +1,48 @@
 package ${project.packageName}.model;
 
 import jakarta.persistence.*;
+<#-- Import target entity types from legacy field-based relationships -->
 <#list entity.fields as field>
-<#if field.relationshipType??>
+<#if field.relationshipType?? && field.relationshipType?has_content>
 import ${project.packageName}.model.${field.relationshipTarget};
 </#if>
 </#list>
-<#assign hasRelationship = false>
-
+<#-- Import target entity types from new relationship definitions -->
+<#if entity.relationships?? && (entity.relationships?size > 0)>
+<#list entity.relationships as rel>
+import ${project.packageName}.model.${rel.targetEntity};
+</#list>
+</#if>
+<#-- Dynamic relationship imports -->
+<#if relationshipImports??>
+<#list relationshipImports as imp>
+import ${imp};
+</#list>
+</#if>
+<#-- Determine if collections are needed (legacy or new) -->
+<#assign hasCollection = false>
 <#list entity.fields as field>
     <#if field.relationshipType?? && field.relationshipType?has_content>
-        <#assign hasRelationship = true>
+        <#if field.relationshipType == "ONE_TO_MANY" || field.relationshipType == "MANY_TO_MANY">
+            <#assign hasCollection = true>
+        </#if>
     </#if>
 </#list>
-
-<#if hasRelationship>
+<#if entity.relationships?? && (entity.relationships?size > 0)>
+<#list entity.relationships as rel>
+    <#if rel.relationshipType.name() == "ONE_TO_MANY" || rel.relationshipType.name() == "MANY_TO_MANY">
+        <#assign hasCollection = true>
+    </#if>
+</#list>
+</#if>
+<#if hasCollection && !(relationshipImports?? && relationshipImports?seq_contains("java.util.List"))>
 import java.util.List;
+import java.util.ArrayList;
 </#if>
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-<#-- Determine required imports -->
+<#-- Determine required imports for field types -->
 <#assign hasDateOrDateTime = false>
 <#assign hasDecimal = false>
 <#list entity.fields as field>
@@ -48,6 +70,7 @@ import java.math.BigDecimal;
 @ToString
 public class ${entity.name?cap_first} {
 
+<#-- Generate regular fields -->
 <#list entity.fields as field>
     <#assign isPrimaryKey = field.fieldType == "PRIMARY_KEY">
     <#assign minVal = "" >
@@ -77,42 +100,43 @@ public class ${entity.name?cap_first} {
     @Column(unique = true)
     </#if>
 
-    <#-- Apply validation only for normal fields, not relationships -->
+    <#-- Apply validation only for normal fields, not legacy relationships -->
     <#if !(field.relationshipType?? && field.relationshipType?has_content)>
 
         <#-- @NotNull if not nullable and not a primary key -->
         <#if !field.nullable && !isPrimaryKey>
-        @NotNull
+    @NotNull
         </#if>
 
         <#-- @Email -->
         <#if hasEmail>
-        @Email
+    @Email
         </#if>
 
         <#-- @Size -->
         <#if needsSize && (minVal != "" || maxVal != "")>
-        @Size(
+    @Size(
             <#if minVal != "">min = ${minVal}</#if>
             <#if minVal != "" && maxVal != "">, </#if>
             <#if maxVal != "">max = ${maxVal}</#if>
-        )
+    )
         </#if>
 
         <#-- Numeric validations -->
         <#if needsMinMax>
             <#if minVal != "">
-        @Min(${minVal})
+    @Min(${minVal})
             </#if>
 
             <#if maxVal != "">
-        @Max(${maxVal})
+    @Max(${maxVal})
             </#if>
         </#if>
 
     </#if>
 
-<#if field.relationshipType??>
+<#-- Legacy field-based relationships (backward compatibility) -->
+<#if field.relationshipType?? && field.relationshipType?has_content>
 
     <#switch field.relationshipType?string>
 
@@ -146,6 +170,15 @@ public class ${entity.name?cap_first} {
 
 </#if>
 </#list>
+
+<#-- Generate relationship fields from RelationshipDefinition (new model) -->
+<#if relationshipFields?? && (relationshipFields?size > 0)>
+    // ========== Relationships ==========
+
+<#list relationshipFields as relField>
+${relField}
+</#list>
+</#if>
 }
 
 <#-- Java type mapper -->

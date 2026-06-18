@@ -2,6 +2,7 @@ package com.user.driven.operations.generator.module;
 
 import com.user.driven.operations.app.core.model.EntityDefinition;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
+import com.user.driven.operations.app.core.model.RelationshipDefinition;
 import com.user.driven.operations.generator.core.BaseGenerator;
 import com.user.driven.operations.generator.core.FileWriterService;
 import com.user.driven.operations.generator.core.TemplateEngine;
@@ -9,30 +10,31 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
 public class EntityModuleGenerator extends BaseGenerator {
 
-    public EntityModuleGenerator(TemplateEngine engine, FileWriterService writer) {
+    private final RelationshipCodeGenerator relationshipCodeGenerator;
+
+    public EntityModuleGenerator(TemplateEngine engine, FileWriterService writer,
+                                 RelationshipCodeGenerator relationshipCodeGenerator) {
         super(engine, writer);
+        this.relationshipCodeGenerator = relationshipCodeGenerator;
     }
 
     public void generate(ProjectDefinition project, EntityDefinition entity, Path basePath) {
-        log.info("Starting entity generation for entity={}",
-                entity.getName());
+        log.info("Starting entity generation for entity={}", entity.getName());
 
         String pkg = project.getPackageName().replace(".", "/");
         log.info("Resolved package path={}", pkg);
-        Map<String, Object> model = Map.of(
-                "project", project,
-                "entity", entity
-        );
+
+        Map<String, Object> model = buildTemplateModel(project, entity);
 
         Path base = basePath.resolve("src/main/java/" + pkg);
-        log.info("Resolved base source path={}",
-                base);
+        log.info("Resolved base source path={}", base);
+
         generate("entity/Entity.java.ftl", model,
                 base.resolve("model/" + entity.getName() + ".java"));
 
@@ -50,5 +52,36 @@ public class EntityModuleGenerator extends BaseGenerator {
 
         generate("entity/Dto.java.ftl", model,
                 base.resolve("dto/" + entity.getName() + "Dto.java"));
+    }
+
+    /**
+     * Builds the template model including relationship code generation data.
+     */
+    private Map<String, Object> buildTemplateModel(ProjectDefinition project, EntityDefinition entity) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("project", project);
+        model.put("entity", entity);
+
+        // Generate relationship fields and imports from new RelationshipDefinition model
+        List<RelationshipDefinition> relationships = entity.getRelationships();
+        if (relationships != null && !relationships.isEmpty()) {
+            log.info("Generating {} relationship fields for entity={}",
+                    relationships.size(), entity.getName());
+
+            List<String> relationshipFields = new ArrayList<>();
+            for (RelationshipDefinition rel : relationships) {
+                String fieldCode = relationshipCodeGenerator.generateRelationshipField(rel, entity.getName());
+                relationshipFields.add(fieldCode);
+            }
+            model.put("relationshipFields", relationshipFields);
+
+            Set<String> imports = relationshipCodeGenerator.generateImports(relationships);
+            model.put("relationshipImports", imports);
+        } else {
+            model.put("relationshipFields", Collections.emptyList());
+            model.put("relationshipImports", Collections.emptySet());
+        }
+
+        return model;
     }
 }
