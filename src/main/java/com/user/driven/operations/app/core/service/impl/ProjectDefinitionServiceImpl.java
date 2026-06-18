@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import com.user.driven.operations.app.core.repository.FieldDefinitionRepository;
 import com.user.driven.operations.app.core.repository.OperationConfigRepository;
 import com.user.driven.operations.app.core.repository.ProjectDefinitionRepository;
 import com.user.driven.operations.app.core.service.ProjectDefinitionService;
+import com.user.driven.operations.enums.DatabaseType;
 
 /**
  * Implementation of {@link ProjectDefinitionService} for managing project definitions.
@@ -91,6 +94,24 @@ public class ProjectDefinitionServiceImpl implements ProjectDefinitionService {
 	@Transactional(readOnly = true)
 	public List<ProjectDefinition> getAllProjects() {
 		return projectRepository.findAll();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProjectDefinition> getAllProjects(Pageable pageable) {
+		return projectRepository.findAll(pageable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Page<ProjectDefinition> getAllProjects(String name, DatabaseType databaseType, Pageable pageable) {
+		return projectRepository.findByFilters(name, databaseType, pageable);
 	}
 
 	/**

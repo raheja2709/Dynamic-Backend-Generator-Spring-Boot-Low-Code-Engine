@@ -2,12 +2,15 @@ package com.user.driven.operations.app.core.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.user.driven.operations.app.core.model.ProjectDefinition;
+import com.user.driven.operations.enums.DatabaseType;
 
 /**
  * Repository interface for {@link ProjectDefinition} entity. Provides methods
@@ -43,5 +46,22 @@ public interface ProjectDefinitionRepository extends JpaRepository<ProjectDefini
 	 */
 	@Query("SELECT DISTINCT p FROM ProjectDefinition p LEFT JOIN FETCH p.entities WHERE p.id = :id")
 	Optional<ProjectDefinition> findByIdWithEntities(@Param("id") Long id);
+
+	/**
+	 * Finds projects filtered by optional name (case-insensitive partial match)
+	 * and optional databaseType (exact match).
+	 *
+	 * @param name         optional name filter (partial, case-insensitive)
+	 * @param databaseType optional database type filter (exact match)
+	 * @param pageable     pagination and sorting parameters
+	 * @return a {@link Page} of matching {@link ProjectDefinition}
+	 */
+	@Query("SELECT p FROM ProjectDefinition p WHERE " +
+			"(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+			"(:databaseType IS NULL OR p.databaseType = :databaseType)")
+	Page<ProjectDefinition> findByFilters(
+			@Param("name") String name,
+			@Param("databaseType") DatabaseType databaseType,
+			Pageable pageable);
 
 }

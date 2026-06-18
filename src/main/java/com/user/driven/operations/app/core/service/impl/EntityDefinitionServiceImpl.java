@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.user.driven.operations.app.api.dto.EntityDefinitionDto;
 import com.user.driven.operations.app.common.exception.DuplicateNameException;
 import com.user.driven.operations.app.common.exception.ProjectNotFoundException;
+import com.user.driven.operations.app.common.exception.ValidationException;
+import com.user.driven.operations.app.common.util.MessageConstants;
 import com.user.driven.operations.app.core.model.EntityDefinition;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.app.api.mapper.DtoMapper;
@@ -48,6 +52,21 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 	public EntityDefinition createEntity(Long projectId, EntityDefinitionDto entityDto) {
 		ProjectDefinition project = projectRepository.findById(projectId)
 				.orElseThrow(() -> new ProjectNotFoundException("Project", projectId.toString()));
+
+		// Check entity limit per project
+		long currentEntityCount = entityRepository.countByProjectId(projectId);
+		if (currentEntityCount >= MessageConstants.MAX_ENTITIES_PER_PROJECT) {
+			throw new ValidationException(
+					String.format(MessageConstants.MAX_ENTITIES_EXCEEDED,
+							MessageConstants.MAX_ENTITIES_PER_PROJECT, currentEntityCount));
+		}
+
+		// Check field limit per entity
+		if (entityDto.getFields() != null && entityDto.getFields().size() > MessageConstants.MAX_FIELDS_PER_ENTITY) {
+			throw new ValidationException(
+					String.format(MessageConstants.MAX_FIELDS_EXCEEDED,
+							MessageConstants.MAX_FIELDS_PER_ENTITY, entityDto.getFields().size()));
+		}
 
 		if (existsByNameAndProjectId(entityDto.getName(), projectId)) {
 			throw new DuplicateNameException("Entity", entityDto.getName());
@@ -98,9 +117,25 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 	 * {@inheritDoc}
 	 */
 	@Override
+	@Transactional(readOnly = true)
+	public Page<EntityDefinition> getEntitiesByProjectId(Long projectId, Pageable pageable) {
+		return entityRepository.findByProjectId(projectId, pageable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public EntityDefinition updateEntity(Long id, EntityDefinitionDto entityDto) {
 		EntityDefinition existingEntity = entityRepository.findById(id)
 				.orElseThrow(() -> new ProjectNotFoundException("Entity", id.toString()));
+
+		// Check field limit per entity on update
+		if (entityDto.getFields() != null && entityDto.getFields().size() > MessageConstants.MAX_FIELDS_PER_ENTITY) {
+			throw new ValidationException(
+					String.format(MessageConstants.MAX_FIELDS_EXCEEDED,
+							MessageConstants.MAX_FIELDS_PER_ENTITY, entityDto.getFields().size()));
+		}
 
 		if (!existingEntity.getName().equals(entityDto.getName())
 				&& existsByNameAndProjectId(entityDto.getName(), existingEntity.getProject().getId())) {

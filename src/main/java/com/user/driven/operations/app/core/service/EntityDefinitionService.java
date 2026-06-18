@@ -3,6 +3,9 @@ package com.user.driven.operations.app.core.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.user.driven.operations.app.api.dto.EntityDefinitionDto;
 import com.user.driven.operations.app.core.model.EntityDefinition;
 
@@ -50,6 +53,15 @@ public interface EntityDefinitionService {
 	 * @return a list of {@link EntityDefinition}
 	 */
 	List<EntityDefinition> getEntitiesByProjectId(Long projectId);
+
+	/**
+	 * Retrieves a paginated list of entities associated with a given project ID.
+	 *
+	 * @param projectId the ID of the project
+	 * @param pageable  the pagination and sorting parameters
+	 * @return a {@link Page} of {@link EntityDefinition}
+	 */
+	Page<EntityDefinition> getEntitiesByProjectId(Long projectId, Pageable pageable);
 
 	/**
 	 * Updates an existing entity with new details.

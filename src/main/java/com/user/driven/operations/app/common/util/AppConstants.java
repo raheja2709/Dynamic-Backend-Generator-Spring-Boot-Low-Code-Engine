@@ -14,8 +14,28 @@ package com.user.driven.operations.app.common.util;
  */
 public class AppConstants {
 
-	/** Endpoint for entity definitions under a project */
+	// --- V1 API paths ---
+
+	/** Base endpoint for project-related operations (v1) */
+	public static final String PROJECTS_V1 = "/api/v1/projects";
+
+	/** Endpoint for entity definitions under a project (v1) */
+	public static final String ENTITIES_V1 = "/api/v1/projects/{projectId}/entities";
+
+	/** Endpoint for generator operations (v1) */
+	public static final String GENERATOR_V1 = "/api/v1/generator";
+
+	// --- Legacy paths (kept for backward compatibility) ---
+
+	/** @deprecated Use {@link #ENTITIES_V1} instead */
+	@Deprecated
 	public static final String entityDefination = "/api/projects/{projectId}/entities";
+
+	/** @deprecated Use {@link #PROJECTS_V1} instead */
+	@Deprecated
+	public static final String projects = "/api/projects";
+
+	// --- Common path segments ---
 
 	/** Endpoint suffix for referencing by ID */
 	public static final String Id = "/{id}";
@@ -24,9 +44,6 @@ public class AppConstants {
 	 * Endpoint to fetch detailed entity information including fields and operations
 	 */
 	public static final String getDetails = "/{id}/details";
-
-	/** Base endpoint for project-related operations */
-	public static final String projects = "/api/projects";
 
 	/** Endpoint to trigger Spring Boot project generation */
 	public static final String generateProject = "/{id}/generate";
