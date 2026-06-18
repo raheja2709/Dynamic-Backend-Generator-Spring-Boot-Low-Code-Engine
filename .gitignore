@@ -48,6 +48,16 @@ TEST-*.xml
 Thumbs.db
 
 # ======================
+# Application logs
+# ======================
+logs/
+
+# ======================
 # Generated project output
 # ======================
 generated-projects/
+
+# ======================
+# Kiro spec files (local only)
+# ======================
+.kiro/

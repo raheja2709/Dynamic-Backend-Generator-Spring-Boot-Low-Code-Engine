@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.user.driven.operations.app.api.dto.EntityDefinitionDto;
+import com.user.driven.operations.app.common.exception.DuplicateNameException;
+import com.user.driven.operations.app.common.exception.ProjectNotFoundException;
 import com.user.driven.operations.app.core.model.EntityDefinition;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.app.api.mapper.DtoMapper;
@@ -45,10 +47,10 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 	@Override
 	public EntityDefinition createEntity(Long projectId, EntityDefinitionDto entityDto) {
 		ProjectDefinition project = projectRepository.findById(projectId)
-				.orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+				.orElseThrow(() -> new ProjectNotFoundException("Project", projectId.toString()));
 
 		if (existsByNameAndProjectId(entityDto.getName(), projectId)) {
-			throw new RuntimeException("Entity with name '" + entityDto.getName() + "' already exists in this project");
+			throw new DuplicateNameException("Entity", entityDto.getName());
 		}
 
 		EntityDefinition entity = dtoMapper.toEntity(entityDto);
@@ -98,11 +100,11 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 	@Override
 	public EntityDefinition updateEntity(Long id, EntityDefinitionDto entityDto) {
 		EntityDefinition existingEntity = entityRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Entity not found with id: " + id));
+				.orElseThrow(() -> new ProjectNotFoundException("Entity", id.toString()));
 
 		if (!existingEntity.getName().equals(entityDto.getName())
 				&& existsByNameAndProjectId(entityDto.getName(), existingEntity.getProject().getId())) {
-			throw new RuntimeException("Entity with name '" + entityDto.getName() + "' already exists in this project");
+			throw new DuplicateNameException("Entity", entityDto.getName());
 		}
 
 		dtoMapper.updateEntityFromDto(entityDto, existingEntity);
@@ -115,7 +117,7 @@ public class EntityDefinitionServiceImpl implements EntityDefinitionService {
 	@Override
 	public void deleteEntity(Long id) {
 		if (!entityRepository.existsById(id)) {
-			throw new RuntimeException("Entity not found with id: " + id);
+			throw new ProjectNotFoundException("Entity", id.toString());
 		}
 		entityRepository.deleteById(id);
 	}

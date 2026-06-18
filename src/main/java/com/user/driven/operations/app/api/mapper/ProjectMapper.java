@@ -1,6 +1,7 @@
 package com.user.driven.operations.app.api.mapper;
 
 import com.user.driven.operations.app.api.dto.*;
+import com.user.driven.operations.app.common.util.MessageConstants;
 import com.user.driven.operations.app.core.model.EntityDefinition;
 import com.user.driven.operations.app.core.model.FieldDefinition;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
@@ -47,7 +48,7 @@ public class ProjectMapper {
                 project.setSecurityType(SecurityType.valueOf(req.getSecurityType().toUpperCase()));
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException(
-                        "Unsupported security type: '" + req.getSecurityType() + "'. Valid types: JWT, OAUTH2, SESSION_BASED, BASIC_AUTH");
+                        String.format(MessageConstants.UNSUPPORTED_SECURITY_TYPE, req.getSecurityType()));
             }
         }
 
@@ -93,8 +94,8 @@ public class ProjectMapper {
             return DataType.valueOf(normalized);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                    "Unsupported field type: '" + type + "'. Valid types: " +
-                    String.join(", ", TYPE_ALIASES.keySet().stream().sorted().toList()));
+                    String.format(MessageConstants.UNSUPPORTED_FIELD_TYPE, type,
+                            String.join(", ", TYPE_ALIASES.keySet().stream().sorted().toList())));
         }
     }
 }

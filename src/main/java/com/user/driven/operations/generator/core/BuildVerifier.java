@@ -3,6 +3,7 @@ package com.user.driven.operations.generator.core;
 import java.io.File;
 import java.io.IOException;
 
+import com.user.driven.operations.app.common.exception.BuildVerificationException;
 import com.user.driven.operations.app.config.AppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,12 @@ public class BuildVerifier {
 
     public void verify(String projectPath) {
 
+        File projectDir = new File(projectPath);
+
         try {
             boolean isWindows = System.getProperty("os.name")
                     .toLowerCase()
                     .contains("win");
-
-            File projectDir = new File(projectPath);
 
             File mvnwFile = new File(projectDir,
                     isWindows ? "mvnw.cmd" : "mvnw");
@@ -60,13 +61,15 @@ public class BuildVerifier {
             int exit = process.waitFor();
 
             if (exit != 0) {
-                throw new RuntimeException("Generated project compilation failed");
+                throw new BuildVerificationException(
+                        projectDir.getName(), "COMPILATION",
+                        new RuntimeException("Maven compile exited with code: " + exit));
             }
 
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Build verification failed for project at path: {}", projectPath, e);
-            throw new RuntimeException("Build verification failed", e);
+            throw new BuildVerificationException(projectDir.getName(), "BUILD_VERIFICATION", e);
         }
     }
 }

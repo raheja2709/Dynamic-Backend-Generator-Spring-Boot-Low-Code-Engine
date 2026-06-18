@@ -1,5 +1,6 @@
 package com.user.driven.operations.app.config;
 
+import com.user.driven.operations.app.common.util.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -55,8 +56,7 @@ public class StartupValidator implements ApplicationRunner {
 
         if (!missingVariables.isEmpty()) {
             String errorMessage = String.format(
-                    "Required environment variable(s) not set for '%s' profile: %s. " +
-                            "Please set these variables or refer to .env.example for documentation.",
+                    MessageConstants.ENV_VALIDATION_FAILED,
                     String.join(", ", activeProfiles),
                     String.join(", ", missingVariables)
             );
@@ -64,7 +64,7 @@ public class StartupValidator implements ApplicationRunner {
             throw new IllegalStateException(errorMessage);
         }
 
-        log.info("Environment validation passed for profile: {}", activeProfiles);
+        log.info(MessageConstants.ENV_VALIDATION_PASSED, activeProfiles);
     }
 
     /**

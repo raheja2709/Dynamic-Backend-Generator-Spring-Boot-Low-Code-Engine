@@ -108,6 +108,12 @@ public class ProjectDefinition {
 	private String customConfiguration;
 
 	/**
+	 * The ID of the user who owns this project. Nullable for legacy projects.
+	 */
+	@Column(name = "user_id")
+	private Long userId;
+
+	/**
 	 * List of entities associated with this project.
 	 */
 	@JsonManagedReference("project-entities")
