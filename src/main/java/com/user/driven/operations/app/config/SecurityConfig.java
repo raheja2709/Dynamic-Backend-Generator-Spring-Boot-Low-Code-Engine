@@ -12,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.user.driven.operations.app.security.ApiKeyAuthenticationFilter;
 import com.user.driven.operations.app.security.JwtAuthenticationFilter;
@@ -45,6 +48,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitFilter rateLimitFilter;
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    private final CorsProperties corsProperties;
 
     /**
      * Configures the security filter chain with API key and JWT authentication.
@@ -68,6 +72,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +81,10 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                // Legacy paths kept for backward compatibility during migration
                 .requestMatchers("/api/projects/**", "/api/generator/**").permitAll()
+                // New v1 paths for projects and generator (temporarily permitted until full auth enforcement)
+                .requestMatchers("/api/v1/projects/**", "/api/v1/generator/**").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll()
             )
@@ -85,6 +93,38 @@ public class SecurityConfig {
             .addFilterAfter(rateLimitFilter, JwtAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    /**
+     * Creates a CORS configuration source based on application properties.
+     * <p>
+     * When no allowed origins are configured (empty list), the configuration
+     * effectively denies all cross-origin requests. When "*" is included in
+     * allowed origins, all origin patterns are permitted.
+     * </p>
+     *
+     * @return the CORS configuration source
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        if (corsProperties.getAllowedOrigins().isEmpty()) {
+            // deny-all: don't set any allowed origins
+        } else if (corsProperties.getAllowedOrigins().contains("*")) {
+            config.addAllowedOriginPattern("*");
+        } else {
+            config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        }
+
+        config.setAllowedMethods(corsProperties.getAllowedMethods());
+        config.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        config.setAllowCredentials(corsProperties.isAllowCredentials());
+        config.setMaxAge(corsProperties.getMaxAge());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     /**

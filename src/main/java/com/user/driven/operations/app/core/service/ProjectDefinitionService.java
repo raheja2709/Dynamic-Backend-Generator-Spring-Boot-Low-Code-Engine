@@ -3,8 +3,12 @@ package com.user.driven.operations.app.core.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.user.driven.operations.app.api.dto.ProjectDefinitionDto;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
+import com.user.driven.operations.enums.DatabaseType;
 
 /**
  * Service interface for managing {@link ProjectDefinition}. Provides methods to
@@ -44,6 +48,24 @@ public interface ProjectDefinitionService {
 	 * @return a list of {@link ProjectDefinition}
 	 */
 	List<ProjectDefinition> getAllProjects();
+
+	/**
+	 * Retrieves a paginated list of projects.
+	 *
+	 * @param pageable the pagination and sorting parameters
+	 * @return a {@link Page} of {@link ProjectDefinition}
+	 */
+	Page<ProjectDefinition> getAllProjects(Pageable pageable);
+
+	/**
+	 * Retrieves a paginated and filtered list of projects.
+	 *
+	 * @param name         optional name filter (case-insensitive partial match)
+	 * @param databaseType optional database type filter (exact match)
+	 * @param pageable     the pagination and sorting parameters
+	 * @return a {@link Page} of {@link ProjectDefinition}
+	 */
+	Page<ProjectDefinition> getAllProjects(String name, DatabaseType databaseType, Pageable pageable);
 
 	/**
 	 * Updates an existing project with new data.

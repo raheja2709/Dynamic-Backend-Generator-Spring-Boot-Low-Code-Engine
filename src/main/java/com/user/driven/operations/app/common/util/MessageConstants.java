@@ -18,12 +18,20 @@ public final class MessageConstants {
     public static final String ENTITY_DUPLICATE_NAME = "Entity with name '%s' already exists in this project";
     public static final String RESOURCE_DUPLICATE = "%s with name '%s' already exists";
 
+    // === Entity/Field Limits ===
+    public static final int MAX_ENTITIES_PER_PROJECT = 50;
+    public static final int MAX_FIELDS_PER_ENTITY = 100;
+    public static final String MAX_ENTITIES_EXCEEDED = "Maximum of %d entities per project exceeded. Current count: %d";
+    public static final String MAX_FIELDS_EXCEEDED = "Maximum of %d fields per entity exceeded. Provided: %d";
+
     // === Validation ===
     public static final String VALIDATION_FAILED = "Validation failed";
     public static final String CONSTRAINT_VIOLATION = "Constraint violation";
     public static final String MALFORMED_REQUEST = "Request body is malformed or contains invalid values";
     public static final String METHOD_NOT_ALLOWED = "HTTP method '%s' is not supported for this endpoint";
     public static final String RESOURCE_PATH_NOT_FOUND = "Resource not found: %s";
+    public static final String PAGE_MUST_BE_NON_NEGATIVE = "Page index must be >= 0";
+    public static final String SIZE_OUT_OF_RANGE = "Page size must be between 1 and 100";
 
     // === Security ===
     public static final String UNSUPPORTED_SECURITY_TYPE = "Unsupported security type: '%s'. Valid types are: JWT, OAUTH2, SESSION_BASED, BASIC_AUTH";

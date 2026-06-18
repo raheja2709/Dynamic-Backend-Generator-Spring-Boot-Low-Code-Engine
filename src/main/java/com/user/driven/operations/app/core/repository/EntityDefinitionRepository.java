@@ -3,6 +3,8 @@ package com.user.driven.operations.app.core.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,6 +29,15 @@ public interface EntityDefinitionRepository extends JpaRepository<EntityDefiniti
 	 * @return list of entity definitions belonging to the specified project
 	 */
 	List<EntityDefinition> findByProjectId(Long projectId);
+
+	/**
+	 * Retrieves a paginated list of entity definitions for a given project ID.
+	 *
+	 * @param projectId the ID of the project
+	 * @param pageable  the pagination and sorting parameters
+	 * @return a page of entity definitions belonging to the specified project
+	 */
+	Page<EntityDefinition> findByProjectId(Long projectId, Pageable pageable);
 
 	/**
 	 * Finds an entity definition by its name and associated project ID.
@@ -77,4 +88,12 @@ public interface EntityDefinitionRepository extends JpaRepository<EntityDefiniti
 	 * @return true if such an entity exists, false otherwise
 	 */
 	boolean existsByNameAndProjectId(String name, Long projectId);
+
+	/**
+	 * Counts the number of entities belonging to a specific project.
+	 *
+	 * @param projectId the ID of the project
+	 * @return the number of entities in the specified project
+	 */
+	long countByProjectId(Long projectId);
 }
