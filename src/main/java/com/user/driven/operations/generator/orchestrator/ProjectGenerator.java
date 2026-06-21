@@ -2,6 +2,7 @@ package com.user.driven.operations.generator.orchestrator;
 
 import com.user.driven.operations.app.common.exception.UnsupportedSecurityTypeException;
 import com.user.driven.operations.app.core.model.ProjectDefinition;
+import com.user.driven.operations.generator.frontend.FrontendGenerator;
 import com.user.driven.operations.generator.module.EntityModuleGenerator;
 import com.user.driven.operations.generator.project.ApplicationGenerator;
 import com.user.driven.operations.generator.project.PomGenerator;
@@ -21,13 +22,17 @@ public class ProjectGenerator {
     private final ApplicationGenerator app;
     private final EntityModuleGenerator entity;
     private final SecurityGeneratorFactory securityFactory;
+    private final FrontendGenerator frontendGenerator;
 
-    public ProjectGenerator(ProjectStructureGenerator structure, PomGenerator pom, ApplicationGenerator app, EntityModuleGenerator entity, SecurityGeneratorFactory securityFactory) {
+    public ProjectGenerator(ProjectStructureGenerator structure, PomGenerator pom, ApplicationGenerator app,
+                            EntityModuleGenerator entity, SecurityGeneratorFactory securityFactory,
+                            FrontendGenerator frontendGenerator) {
         this.structure = structure;
         this.pom = pom;
         this.app = app;
         this.entity = entity;
         this.securityFactory = securityFactory;
+        this.frontendGenerator = frontendGenerator;
     }
 
     public void generate(ProjectDefinition project, Path path) {
@@ -55,6 +60,12 @@ public class ProjectGenerator {
                 throw new UnsupportedSecurityTypeException(
                         project.getSecurityType() != null ? project.getSecurityType().name() : "null");
             }
+        }
+
+        // Generate frontend if enabled and at least one entity exists
+        if (project.isFrontendEnabled() && project.getEntities() != null && !project.getEntities().isEmpty()) {
+            log.info("Generating frontend for project={}", project.getName());
+            frontendGenerator.generate(project, path);
         }
     }
 }
