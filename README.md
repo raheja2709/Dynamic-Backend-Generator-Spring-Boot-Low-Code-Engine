@@ -1,331 +1,174 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk&logoColor=white" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.0-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
-  <img src="https://img.shields.io/badge/Maven-3.6+-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-15+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
-  <img src="https://img.shields.io/badge/FreeMarker-Templates-0066CC?style=for-the-badge" />
-</p>
+# Dynamic Backend Generator — Spring Boot Low-Code Engine
 
-<h1 align="center">⚡ Dynamic Backend Generator</h1>
+A production-ready low-code engine that generates complete Spring Boot applications (with optional React frontends) from a JSON schema definition. Define your entities, relationships, operations, and security — get a fully functional, compilable project in seconds.
 
-<p align="center">
-  <strong>A Spring Boot Low-Code Engine that generates complete, production-ready backend projects from simple entity definitions via REST API.</strong>
-</p>
-
-<p align="center">
-  Define your entities, fields, relationships, and operations → Get a fully functional Spring Boot project as a downloadable ZIP.
-</p>
-
----
-
-## 🎯 What It Does
+## Architecture
 
 ```
-┌──────────────────┐         ┌──────────────────────┐         ┌─────────────────┐
-│   Define your    │         │   Dynamic Backend    │         │  Download your  │
-│   entities via   │ ──────► │   Generator Engine   │ ──────► │  complete app   │
-│   REST API       │         │   (this project)     │         │  as ZIP         │
-└──────────────────┘         └──────────────────────┘         └─────────────────┘
-
-  POST your schema            Generates: Entity,              Ready to run with
-  (name, fields,              Controller, Service,            `mvn spring-boot:run`
-   operations)                Repository, DTO, Config
+┌─────────────────────────────────────────────────────┐
+│                    API Layer                         │
+│  AuthController │ ProjectController │ GeneratorCtrl  │
+├─────────────────────────────────────────────────────┤
+│                  Service Layer                       │
+│  EntityService │ ProjectGenerationService │ JwtSvc   │
+├─────────────────────────────────────────────────────┤
+│               Generator Pipeline                     │
+│  ProjectGenerator → EntityModule → Security → Frontend│
+│  TemplateEngine (FreeMarker) → FileWriter → BuildVerifier│
+├─────────────────────────────────────────────────────┤
+│                 Data Layer                           │
+│  JPA Repositories │ Flyway Migrations │ H2/PostgreSQL│
+└─────────────────────────────────────────────────────┘
 ```
 
-**In one API call**, you get a complete Spring Boot project with:
-- ✅ JPA Entities with relationships
-- ✅ REST Controllers (CRUD + advanced operations)
-- ✅ Service layer with business logic
-- ✅ Spring Data repositories
-- ✅ DTOs and mappers
-- ✅ Security configuration (JWT, Basic Auth, OAuth2, Session)
-- ✅ Swagger/OpenAPI documentation
-- ✅ Maven build with all dependencies
-- ✅ Build-verified (compiles before delivery)
-
----
-
-## 🏗️ Architecture
+### Package Structure
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                       REST API Layer                             │
-│   ProjectDefinitionController │ EntityDefinitionController       │
-│                    GeneratorController                           │
-├─────────────────────────────────────────────────────────────────┤
-│                      Service Layer                               │
-│   ProjectDefinitionService │ EntityDefinitionService             │
-│               ProjectGenerationService                          │
-├─────────────────────────────────────────────────────────────────┤
-│                    Generator Engine                              │
-│   ProjectGenerator → EntityModuleGenerator                      │
-│   FreemarkerTemplateEngine → SecurityGeneratorFactory            │
-│   BuildVerifier (compiles output before ZIP)                    │
-├─────────────────────────────────────────────────────────────────┤
-│                      Data Layer                                  │
-│   JPA Repositories (PostgreSQL / H2) │ Flyway Migrations        │
-└─────────────────────────────────────────────────────────────────┘
+com.user.driven.operations
+├── app
+│   ├── api          # REST controllers, DTOs, mappers
+│   ├── common       # Exceptions, utilities, constants
+│   ├── config       # Security, async, CORS, properties
+│   └── core         # Models, repositories, services
+├── enums            # OperationType, RelationshipType, SecurityType, etc.
+└── generator
+    ├── core         # TemplateEngine, FileWriter, BuildVerifier
+    ├── frontend     # React frontend generator
+    ├── module       # Entity + relationship + DTO generators
+    ├── orchestrator # ProjectGenerator (pipeline coordinator)
+    ├── project      # Pom, Application, Structure generators
+    ├── security     # JWT, Basic, OAuth2, Session generators
+    └── utils        # NamingUtils, RelationshipGeneratorUtil
 ```
 
-### 📁 Package Structure
+## Tech Stack
 
-```
-com.user.driven.operations/
-├── app/
-│   ├── api/
-│   │   ├── controller/       → REST endpoints
-│   │   ├── dto/              → Request/Response objects
-│   │   └── mapper/           → DTO ↔ Entity mapping
-│   ├── common/
-│   │   ├── exception/        → Global error handling
-│   │   └── util/             → Constants, utilities
-│   ├── config/               → Spring configuration
-│   └── core/
-│       ├── model/            → JPA entities
-│       ├── repository/       → Spring Data repos
-│       └── service/          → Business logic
-├── enums/                    → OperationType, SecurityType, etc.
-└── generator/
-    ├── core/                 → Template engine, build verifier
-    ├── module/               → Entity code generators
-    ├── orchestrator/         → Generation pipeline
-    ├── project/              → POM, config, validator
-    ├── security/             → JWT/OAuth2/Basic/Session generators
-    └── utils/                → Naming utilities
-```
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Framework | Spring Boot | 3.5.0 |
+| Language | Java | 17 |
+| Build | Maven | 3.9+ |
+| Database (prod) | PostgreSQL | 15+ |
+| Database (dev) | H2 | In-memory |
+| Migrations | Flyway | 10+ |
+| Templates | FreeMarker | 2.3.32 |
+| Auth | JWT (jjwt) | 0.12.6 |
+| Docs | SpringDoc OpenAPI | 2.8.8 |
+| Testing | JUnit 5 + Mockito | via Spring Boot |
+| Coverage | JaCoCo | 0.8.11 |
 
----
+## Prerequisites
 
-## 🚀 Quick Start
+- Java 17+
+- Maven 3.9+
+- PostgreSQL 15+ (production) or H2 (dev, auto-configured)
 
-### Development Mode (zero setup — uses H2 in-memory)
+## Quick Start
+
+### Development (H2 in-memory)
 
 ```bash
-git clone https://github.com/your-repo/Dynamic-Backend-Generator.git
-cd Dynamic-Backend-Generator-Spring-Boot-Low-Code-Engine
-
-# Build and run (dev profile is default)
 mvn spring-boot:run
 ```
 
-🟢 **App starts at:** http://localhost:8083  
-📘 **Swagger UI:** http://localhost:8083/swagger-ui.html  
-🗄️ **H2 Console:** http://localhost:8083/h2-console
+App starts on `http://localhost:8083` with H2 console at `/h2-console`.
 
-### Production Mode (PostgreSQL)
+### Production (PostgreSQL)
 
 ```bash
-# Create database
-psql -U postgres -c "CREATE DATABASE user_driven_operation_mng_sys;"
-
-# Run with prod profile
-export DB_URL=jdbc:postgresql://localhost:5432/user_driven_operation_mng_sys
+export DB_URL=jdbc:postgresql://localhost:5432/generator_db
 export DB_USERNAME=postgres
-export DB_PASSWORD=your_password
+export DB_PASSWORD=yourpassword
+export JWT_SECRET=your-base64-encoded-256-bit-key
 
 mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
-🟢 **App starts at:** http://localhost:8080 (Flyway auto-creates tables)
-
----
-
-## 🔧 Environment Profiles
-
-| Profile | Database | DDL Mode | Flyway | Port | Use Case |
-|:--------|:---------|:---------|:-------|:-----|:---------|
-| `dev` _(default)_ | H2 in-memory | create-drop | ❌ | 8083 | Local development |
-| `prod` | PostgreSQL | validate | ✅ | 8080 | Production |
-| `docker` | PostgreSQL (`db` host) | validate | ✅ | 8080 | Docker Compose |
-
----
-
-## 📡 API Endpoints
-
-### Project Management
-
-| Method | Endpoint | Description |
-|:-------|:---------|:------------|
-| `POST` | `/api/projects` | Create a new project |
-| `GET` | `/api/projects` | List all projects |
-| `GET` | `/api/projects/{id}` | Get project by ID |
-| `GET` | `/api/projects/{id}/details` | Get project with entities, fields & operations |
-| `PUT` | `/api/projects/{id}` | Update a project |
-
-### Entity Management
-
-| Method | Endpoint | Description |
-|:-------|:---------|:------------|
-| `POST` | `/api/projects/{projectId}/entities` | Create entity with fields & operations |
-| `GET` | `/api/projects/{projectId}/entities` | List all entities |
-| `GET` | `/api/projects/{projectId}/entities/{id}` | Get entity by ID |
-| `GET` | `/api/projects/{projectId}/entities/{id}/details` | Get entity with full details |
-| `PUT` | `/api/projects/{projectId}/entities/{id}` | Update entity |
-| `DELETE` | `/api/projects/{projectId}/entities/{id}` | Delete entity |
-
-### Code Generation
-
-| Method | Endpoint | Description |
-|:-------|:---------|:------------|
-| `POST` | `/api/generator/generate` | Generate & download complete Spring Boot project |
-
----
-
-## 💡 Example: Generate a Project in One Call
+### Docker
 
 ```bash
-curl -X POST http://localhost:8083/api/generator/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "ECommerceApp",
-    "packageName": "com.example.ecommerce",
-    "securityEnabled": true,
-    "securityType": "JWT",
-    "entities": [
-      {
-        "name": "Product",
-        "fields": [
-          {"name": "id", "type": "Long", "fieldType": "PRIMARY_KEY"},
-          {"name": "name", "type": "String", "fieldType": "NORMAL"},
-          {"name": "price", "type": "Double", "fieldType": "NORMAL"},
-          {"name": "active", "type": "Boolean", "fieldType": "NORMAL"}
-        ]
-      },
-      {
-        "name": "Order",
-        "fields": [
-          {"name": "id", "type": "Long", "fieldType": "PRIMARY_KEY"},
-          {"name": "orderDate", "type": "LocalDateTime", "fieldType": "NORMAL"},
-          {"name": "total", "type": "BigDecimal", "fieldType": "NORMAL"}
-        ]
-      }
-    ]
-  }' --output ecommerce.zip
+docker-compose up
 ```
 
-**Result:** A complete, compilable Spring Boot project delivered as a ZIP.
+## API Endpoints
 
----
+### Authentication
 
-## 📋 Supported Operations
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/auth/register` | Register new user |
+| POST | `/api/v1/auth/login` | Login, get JWT tokens |
 
-Every entity can have any combination of these operations:
+### Projects
 
-| Category | Operations | What Gets Generated |
-|:---------|:-----------|:-------------------|
-| **CRUD** | `CREATE`, `READ`, `UPDATE`, `DELETE` | Standard REST endpoints |
-| **Query** | `SEARCH`, `PAGINATION` | JPA Specifications, Pageable |
-| **Bulk** | `BULK_INSERT`, `BULK_UPDATE`, `BULK_DELETE` | Batch endpoints |
-| **Soft Delete** | `SOFT_DELETE`, `RESTORE` | Deleted flag + restore endpoint |
-| **Export** | `EXPORT_CSV`, `EXPORT_EXCEL`, `EXPORT_PDF` | File download endpoints |
-| **Import** | `IMPORT_CSV`, `IMPORT_EXCEL` | File upload + parsing |
-| **Files** | `FILE_UPLOAD`, `FILE_DOWNLOAD` | Storage service + endpoints |
-| **Audit** | `AUDIT_LOG`, `VERSIONING` | Change tracking, optimistic locking |
-| **Advanced** | `STATUS_TRANSITION`, `WEBHOOK_INTEGRATION` | State machine, event hooks |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/projects` | List projects (paginated, filterable) |
+| POST | `/api/v1/projects` | Create project |
+| GET | `/api/v1/projects/{id}` | Get project by ID |
+| PUT | `/api/v1/projects/{id}` | Update project |
+| DELETE | `/api/v1/projects/{id}` | Delete project |
 
----
+### Entities
 
-## 🔐 Security Types
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/projects/{id}/entities` | List entities |
+| POST | `/api/v1/projects/{id}/entities` | Create entity |
+| PUT | `/api/v1/entities/{id}` | Update entity |
+| DELETE | `/api/v1/entities/{id}` | Delete entity |
 
-| Type | Generated Code |
-|:-----|:---------------|
-| `JWT` | SecurityConfig, JwtFilter, JwtUtils, AuthController, User/Role entities, DTOs |
-| `BASIC_AUTH` | SecurityConfig with HTTP Basic + BCryptPasswordEncoder |
-| `OAUTH2` | SecurityConfig with OAuth2 login + resource server config |
-| `SESSION_BASED` | SecurityConfig with form login + session management |
+### Generation
 
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/generator/generate` | Synchronous generation (returns ZIP) |
+| POST | `/api/v1/generator/async/generate` | Async generation (returns job ID) |
+| GET | `/api/v1/generator/status/{jobId}` | Poll job status |
+| GET | `/api/v1/generator/download/{jobId}` | Download completed ZIP |
 
-## 🗄️ Database Schema (Flyway-managed)
+### Documentation
+
+| Endpoint | Description |
+|----------|-------------|
+| `/swagger-ui.html` | Interactive API docs |
+| `/api-docs` | OpenAPI 3.0 JSON spec |
+
+## Database Setup
+
+### PostgreSQL
 
 ```sql
-project_definitions          -- Project config (name, package, DB, security)
-  └── entity_definitions     -- Entities within a project
-        ├── field_definitions    -- Fields/columns per entity
-        └── operation_configs    -- Operations per entity (CRUD, export, etc.)
+CREATE DATABASE generator_db;
+CREATE USER generator_user WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE generator_db TO generator_user;
 ```
 
----
+### H2 (Development)
 
-## ⚙️ Configuration
+No setup needed — auto-configured with `spring.profiles.active=dev`.
+
+## Environment Variables
+
+See `.env.example` for the complete list. Key variables:
 
 | Variable | Description | Default |
-|:---------|:------------|:--------|
-| `DB_URL` | JDBC connection URL | `jdbc:h2:mem:testdb` |
-| `DB_USERNAME` | Database username | `sa` |
-| `DB_PASSWORD` | Database password | _(empty)_ |
-| `APP_GENERATED_PROJECTS_DIR` | Output directory | `./generated-projects` |
-| `APP_MAVEN_PATH` | Maven executable | `mvn` |
+|----------|-------------|---------|
+| `DB_URL` | Database JDBC URL | H2 in-memory (dev) |
+| `DB_USERNAME` | Database username | sa (dev) |
+| `DB_PASSWORD` | Database password | empty (dev) |
+| `JWT_SECRET` | Base64 JWT signing key | dev key |
+| `APP_GENERATED_PROJECTS_DIR` | Output directory | ./generated-projects |
+| `APP_MAVEN_PATH` | Maven executable path | mvn |
 
----
+## Running Tests
 
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|:------|:-----------|
-| Language | Java 17 LTS |
-| Framework | Spring Boot 3.5.0 |
-| Build | Maven 3.6+ |
-| ORM | Spring Data JPA + Hibernate 6.6 |
-| Database | PostgreSQL 15+ / H2 (dev) |
-| Migrations | Flyway |
-| Templates | FreeMarker 2.3.34 |
-| API Docs | SpringDoc OpenAPI 2.8.8 |
-| Utilities | Lombok, Jackson, Commons Compress |
-
----
-
-## 📂 Generated Project Structure
-
-When you generate a project, you receive:
-
-```
-your-app/
-├── src/main/java/com/your/package/
-│   ├── config/          → SecurityConfig, SwaggerConfig
-│   ├── controller/      → REST controllers per entity + AuthController
-│   ├── dto/             → Request/Response DTOs
-│   ├── model/           → JPA entities (User, Role, your entities)
-│   ├── repository/      → Spring Data repositories
-│   ├── security/        → JWT filter, utils, entry point
-│   ├── service/         → Service implementations
-│   └── Application.java
-├── src/main/resources/
-│   └── application.properties
-├── pom.xml              → All dependencies configured
-└── Ready to: mvn spring-boot:run
+```bash
+mvn test
 ```
 
----
+Coverage report generated at `target/site/jacoco/index.html`.
 
-## 🗺️ Roadmap
+## License
 
-- [x] ~~Phase 1: Codebase cleanup~~
-- [x] ~~Phase 2: Flyway migrations + multi-environment profiles~~
-- [ ] Phase 3: @ConfigurationProperties + env validation
-- [ ] Phase 4: Custom exception hierarchy
-- [ ] Phase 5: Audit logging (DB + Logback)
-- [ ] Phase 6: JWT authentication + API keys
-- [ ] Phase 7: API versioning + response envelopes
-- [ ] Phase 8: Relationship model (dedicated entity)
-- [ ] Phase 9: Relationship code generation
-- [ ] Phase 10: DTO strategies (ID_ONLY, SUMMARY, NESTED, IGNORE)
-- [ ] Phase 11: All 22 operation types fully implemented
-- [ ] Phase 12: Security generators (JWT, Basic, OAuth2, Session)
-- [ ] Phase 13: Async generation + progress tracking
-- [ ] Phase 14: React frontend generation
-- [ ] Phase 15: 80%+ test coverage (JaCoCo)
-- [ ] Phase 16: Postman collection + docs
-- [ ] Phase 17: Docker + Kubernetes
-
----
-
-## 👨‍💻 Author
-
-**Jatin Raheja**
-
----
-
-<p align="center">
-  <sub>Built with ☕ Java 17 • Spring Boot 3.5 • FreeMarker Templates</sub>
-</p>
+MIT
