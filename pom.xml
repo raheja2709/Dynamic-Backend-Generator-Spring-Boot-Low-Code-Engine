@@ -13,18 +13,24 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>user.driven.operation.management</name>
 	<description>Demo project for Spring Boot</description>
-	<url/>
+	<url>https://github.com/raheja2709/Dynamic-Backend-Generator-Spring-Boot-Low-Code-Engine</url>
 	<licenses>
-		<license/>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Jatin Raheja</name>
+			<email>raheja2709@gmail.com</email>
+		</developer>
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:git://github.com/raheja2709/Dynamic-Backend-Generator-Spring-Boot-Low-Code-Engine.git</connection>
+		<developerConnection>scm:git:ssh://github.com/raheja2709/Dynamic-Backend-Generator-Spring-Boot-Low-Code-Engine.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/raheja2709/Dynamic-Backend-Generator-Spring-Boot-Low-Code-Engine</url>
 	</scm>
 	<properties>
 		<java.version>17</java.version>

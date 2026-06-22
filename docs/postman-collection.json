@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "Dynamic Backend Generator API",
+    "description": "Complete API collection for the Spring Boot Low-Code Engine",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8083"},
+    {"key": "token", "value": ""}
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/register",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password1!\",\n  \"fullName\": \"Test User\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/auth/login",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"Password1!\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/projects?page=0&size=20",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/projects",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"MyApp\",\n  \"packageName\": \"com.example.myapp\",\n  \"databaseType\": \"POSTGRESQL\",\n  \"securityEnabled\": true,\n  \"securityType\": \"JWT\",\n  \"frontendEnabled\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Project",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/projects/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/v1/projects/1",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Entities",
+      "item": [
+        {
+          "name": "Create Entity",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/projects/1/entities",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Product\",\n  \"fields\": [\n    {\"name\": \"id\", \"dataType\": \"LONG\", \"fieldType\": \"PRIMARY_KEY\", \"nullable\": false},\n    {\"name\": \"name\", \"dataType\": \"STRING\", \"fieldType\": \"NORMAL\", \"nullable\": false},\n    {\"name\": \"price\", \"dataType\": \"DECIMAL\", \"fieldType\": \"NORMAL\", \"nullable\": true}\n  ],\n  \"relationships\": [\n    {\n      \"fieldName\": \"category\",\n      \"relationshipType\": \"MANY_TO_ONE\",\n      \"targetEntity\": \"Category\",\n      \"fetchType\": \"LAZY\",\n      \"dtoStrategy\": \"ID_ONLY\"\n    }\n  ],\n  \"operations\": [\n    {\"operationType\": \"CREATE\", \"enabled\": true},\n    {\"operationType\": \"READ\", \"enabled\": true},\n    {\"operationType\": \"UPDATE\", \"enabled\": true},\n    {\"operationType\": \"DELETE\", \"enabled\": true},\n    {\"operationType\": \"PAGINATION\", \"enabled\": true}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Generator",
+      "item": [
+        {
+          "name": "Generate (Sync)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/generator/generate",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ECommerceApp\",\n  \"packageName\": \"com.example.ecommerce\",\n  \"securityEnabled\": true,\n  \"securityType\": \"JWT\",\n  \"entities\": [\n    {\n      \"name\": \"Product\",\n      \"fields\": [\n        {\"name\": \"id\", \"type\": \"LONG\", \"fieldType\": \"PRIMARY_KEY\"},\n        {\"name\": \"name\", \"type\": \"STRING\", \"nullable\": false},\n        {\"name\": \"price\", \"type\": \"DECIMAL\", \"nullable\": false},\n        {\"name\": \"description\", \"type\": \"TEXT\", \"nullable\": true}\n      ]\n    },\n    {\n      \"name\": \"Category\",\n      \"fields\": [\n        {\"name\": \"id\", \"type\": \"LONG\", \"fieldType\": \"PRIMARY_KEY\"},\n        {\"name\": \"name\", \"type\": \"STRING\", \"nullable\": false}\n      ]\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Generate (Async)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/generator/async/generate",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{token}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AsyncApp\",\n  \"packageName\": \"com.example.asyncapp\",\n  \"securityEnabled\": false,\n  \"entities\": [\n    {\n      \"name\": \"Task\",\n      \"fields\": [\n        {\"name\": \"id\", \"type\": \"LONG\", \"fieldType\": \"PRIMARY_KEY\"},\n        {\"name\": \"title\", \"type\": \"STRING\", \"nullable\": false}\n      ]\n    }\n  ]\n}"
+            }
+          }
+        },
+        {
+          "name": "Job Status",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/generator/status/{{jobId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        },
+        {
+          "name": "Download Result",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/generator/download/{{jobId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}]
+          }
+        }
+      ]
+    }
+  ]
+}
