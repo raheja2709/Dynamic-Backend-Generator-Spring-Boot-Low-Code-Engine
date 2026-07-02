@@ -1,0 +1,9 @@
+target/
+generated-projects/
+.git/
+.idea/
+.kiro/
+*.iml
+*.log
+.env
+node_modules/
