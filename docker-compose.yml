@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # ============================================================
+  # Application
+  # ============================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-generator
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://db:5432/generator_db
+      DB_USERNAME: ${DB_USERNAME:-generator}
+      DB_PASSWORD: ${DB_PASSWORD:-generator_secret}
+      JWT_SECRET: ${JWT_SECRET:-bXlEZWZhdWx0U2VjcmV0S2V5VGhhdElzQXRMZWFzdDI1NkJpdHNMb25nRm9ySFMyNTZBbGdvcml0aG0=}
+      APP_GENERATED_PROJECTS_DIR: /app/generated-projects
+      APP_MAVEN_PATH: mvn
+      JAVA_OPTS: "-Xms256m -Xmx1024m"
+    volumes:
+      - generated-projects:/app/generated-projects
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+  # ============================================================
+  # PostgreSQL Database
+  # ============================================================
+  db:
+    image: postgres:15-alpine
+    container_name: backend-generator-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: generator_db
+      POSTGRES_USER: ${DB_USERNAME:-generator}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-generator_secret}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-generator} -d generator_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # ============================================================
+  # pgAdmin (Database Management UI)
+  # ============================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: backend-generator-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    depends_on:
+      - db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+volumes:
+  postgres-data:
+    driver: local
+  generated-projects:
+    driver: local
