@@ -57,7 +57,7 @@ public interface ProjectDefinitionRepository extends JpaRepository<ProjectDefini
 	 * @return a {@link Page} of matching {@link ProjectDefinition}
 	 */
 	@Query("SELECT p FROM ProjectDefinition p WHERE " +
-			"(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+			"(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%'))) AND " +
 			"(:databaseType IS NULL OR p.databaseType = :databaseType)")
 	Page<ProjectDefinition> findByFilters(
 			@Param("name") String name,
