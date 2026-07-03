@@ -60,9 +60,11 @@ public class AsyncGeneratorController {
     public ResponseEntity<?> submitGeneration(@Valid @RequestBody GenerateProjectRequest request,
                                               @RequestAttribute(value = "userId", required = false) Long userId) {
         // Check concurrent job limit
-        Long effectiveUserId = userId != null ? userId : 0L;
-        long activeJobs = jobRepository.countByUserIdAndStatusIn(effectiveUserId,
-                List.of(JobStatus.QUEUED, JobStatus.PROCESSING));
+        Long effectiveUserId = userId != null ? userId : null;
+        long activeJobs = effectiveUserId != null
+                ? jobRepository.countByUserIdAndStatusIn(effectiveUserId,
+                    List.of(JobStatus.QUEUED, JobStatus.PROCESSING))
+                : 0L;
 
         if (activeJobs >= MAX_CONCURRENT_JOBS) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
@@ -81,7 +83,6 @@ public class AsyncGeneratorController {
                 .status(JobStatus.QUEUED)
                 .progress(0)
                 .build();
-        job.setCreatedAt(java.time.LocalDateTime.now());
         jobRepository.save(job);
 
         // Map request and submit async
