@@ -39,42 +39,45 @@ public class EntityModuleGenerator extends BaseGenerator {
         Path base = basePath.resolve("src/main/java/" + pkg);
         log.info("Resolved base source path={}", base);
 
+        // Capitalize entity name for file names (Java class naming convention)
+        String name = capitalize(entity.getName());
+
         // Core entity files
         generate("entity/Entity.java.ftl", model,
-                base.resolve("model/" + entity.getName() + ".java"));
+                base.resolve("model/" + name + ".java"));
 
         generate("entity/Repository.java.ftl", model,
-                base.resolve("repository/" + entity.getName() + "Repository.java"));
+                base.resolve("repository/" + name + "Repository.java"));
 
         generate("entity/Service.java.ftl", model,
-                base.resolve("service/" + entity.getName() + "Service.java"));
+                base.resolve("service/" + name + "Service.java"));
 
         generate("entity/ServiceImpl.java.ftl", model,
-                base.resolve("service/impl/" + entity.getName() + "ServiceImpl.java"));
+                base.resolve("service/impl/" + name + "ServiceImpl.java"));
 
         generate("entity/Controller.java.ftl", model,
-                base.resolve("controller/" + entity.getName() + "Controller.java"));
+                base.resolve("controller/" + name + "Controller.java"));
 
         // Legacy DTO (backward compatibility)
         generate("entity/Dto.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "Dto.java"));
+                base.resolve("dto/" + name + "Dto.java"));
 
         // New DTO types
         generate("entity/ListDto.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "ListDto.java"));
+                base.resolve("dto/" + name + "ListDto.java"));
 
         generate("entity/DetailDto.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "DetailDto.java"));
+                base.resolve("dto/" + name + "DetailDto.java"));
 
         generate("entity/CreateRequest.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "CreateRequest.java"));
+                base.resolve("dto/" + name + "CreateRequest.java"));
 
         generate("entity/UpdateRequest.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "UpdateRequest.java"));
+                base.resolve("dto/" + name + "UpdateRequest.java"));
 
         // Summary DTO (always generated - may be referenced by other entities)
         generate("entity/SummaryDto.java.ftl", model,
-                base.resolve("dto/" + entity.getName() + "SummaryDto.java"));
+                base.resolve("dto/" + name + "SummaryDto.java"));
 
         log.info("Completed generation for entity={}", entity.getName());
     }
@@ -129,5 +132,10 @@ public class EntityModuleGenerator extends BaseGenerator {
             }
         }
         return "name";
+    }
+
+    private String capitalize(String str) {
+        if (str == null || str.isEmpty()) return str;
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 }

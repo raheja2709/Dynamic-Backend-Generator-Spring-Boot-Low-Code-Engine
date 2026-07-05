@@ -45,7 +45,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"entities"})
 public class ProjectDefinition {
 
 	/**

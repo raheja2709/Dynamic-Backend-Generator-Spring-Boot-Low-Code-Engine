@@ -1,6 +1,5 @@
 package com.user.driven.operations.app.api.dto;
 
-
 import lombok.*;
 
 import java.util.List;
@@ -14,6 +13,5 @@ public class EntityRequest {
 
     private String name;
     private List<FieldRequest> fields;
-
-    // getters/setters
+    private List<OperationRequest> operations;
 }
