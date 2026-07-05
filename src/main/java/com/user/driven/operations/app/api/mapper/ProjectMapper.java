@@ -73,11 +73,43 @@ public class ProjectMapper {
                                 return field;
                             }).toList()
                     );
+
+                    // Map operations
+                    if (e.getOperations() != null && !e.getOperations().isEmpty()) {
+                        entity.setOperations(
+                                e.getOperations().stream()
+                                        .filter(op -> op.isEnabled())
+                                        .map(op -> {
+                                            var config = new com.user.driven.operations.app.core.model.OperationConfig();
+                                            config.setOperationType(
+                                                    com.user.driven.operations.enums.OperationType.valueOf(op.getOperationType()));
+                                            config.setEnabled(true);
+                                            return config;
+                                        }).collect(Collectors.toList())
+                        );
+                    } else {
+                        // Default: CRUD operations
+                        entity.setOperations(java.util.List.of(
+                                createOp(com.user.driven.operations.enums.OperationType.CREATE),
+                                createOp(com.user.driven.operations.enums.OperationType.READ),
+                                createOp(com.user.driven.operations.enums.OperationType.UPDATE),
+                                createOp(com.user.driven.operations.enums.OperationType.DELETE)
+                        ));
+                    }
+
                     return entity;
                 }).collect(Collectors.toList())
         );
 
         return project;
+    }
+
+    private static com.user.driven.operations.app.core.model.OperationConfig createOp(
+            com.user.driven.operations.enums.OperationType type) {
+        var config = new com.user.driven.operations.app.core.model.OperationConfig();
+        config.setOperationType(type);
+        config.setEnabled(true);
+        return config;
     }
 
     private static DataType resolveDataType(String type) {

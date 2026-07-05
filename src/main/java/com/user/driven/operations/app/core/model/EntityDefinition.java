@@ -42,7 +42,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"project", "fields", "relationships", "operations"})
 public class EntityDefinition {
 
 	/**
