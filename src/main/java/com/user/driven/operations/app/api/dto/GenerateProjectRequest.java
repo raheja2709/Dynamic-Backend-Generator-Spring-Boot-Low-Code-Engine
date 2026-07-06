@@ -23,6 +23,12 @@ public class GenerateProjectRequest {
 
     private String securityType;
 
+    private String databaseType;
+
+    private String javaVersion;
+
+    private String springBootVersion;
+
     @NotEmpty
     private List<EntityRequest> entities;
 

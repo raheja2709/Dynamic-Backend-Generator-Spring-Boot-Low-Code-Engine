@@ -56,7 +56,7 @@ public class EntityDefinition {
 	 * Name of the entity. Must be unique and not blank.
 	 */
 	@NotBlank(message = "Entity name is required")
-	@Column(unique = true)
+	@Column
 	private String name;
 
 	/**

@@ -5,6 +5,7 @@ import com.user.driven.operations.app.core.model.ProjectDefinition;
 import com.user.driven.operations.generator.frontend.FrontendGenerator;
 import com.user.driven.operations.generator.module.EntityModuleGenerator;
 import com.user.driven.operations.generator.project.ApplicationGenerator;
+import com.user.driven.operations.generator.project.BoilerplateGenerator;
 import com.user.driven.operations.generator.project.PomGenerator;
 import com.user.driven.operations.generator.project.ProjectStructureGenerator;
 import com.user.driven.operations.generator.security.SecurityGeneratorFactory;
@@ -23,16 +24,18 @@ public class ProjectGenerator {
     private final EntityModuleGenerator entity;
     private final SecurityGeneratorFactory securityFactory;
     private final FrontendGenerator frontendGenerator;
+    private final BoilerplateGenerator boilerplateGenerator;
 
     public ProjectGenerator(ProjectStructureGenerator structure, PomGenerator pom, ApplicationGenerator app,
                             EntityModuleGenerator entity, SecurityGeneratorFactory securityFactory,
-                            FrontendGenerator frontendGenerator) {
+                            FrontendGenerator frontendGenerator, BoilerplateGenerator boilerplateGenerator) {
         this.structure = structure;
         this.pom = pom;
         this.app = app;
         this.entity = entity;
         this.securityFactory = securityFactory;
         this.frontendGenerator = frontendGenerator;
+        this.boilerplateGenerator = boilerplateGenerator;
     }
 
     public void generate(ProjectDefinition project, Path path) {
@@ -40,6 +43,7 @@ public class ProjectGenerator {
         structure.generate(project, path);
         pom.generate(project, path);
         app.generate(project, path);
+        boilerplateGenerator.generate(project, path);
 
         project.getEntities().forEach(e -> {
             // Log warning for unsupported operation types and skip them

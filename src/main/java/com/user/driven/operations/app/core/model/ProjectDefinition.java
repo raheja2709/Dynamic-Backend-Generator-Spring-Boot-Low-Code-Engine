@@ -114,6 +114,18 @@ public class ProjectDefinition {
 	private boolean frontendEnabled = false;
 
 	/**
+	 * Java version for the generated project (default: 17).
+	 */
+	@Column(name = "java_version")
+	private String javaVersion = "17";
+
+	/**
+	 * Spring Boot version for the generated project (default: 3.2.5).
+	 */
+	@Column(name = "spring_boot_version")
+	private String springBootVersion = "3.2.5";
+
+	/**
 	 * The ID of the user who owns this project. Nullable for legacy projects.
 	 */
 	@Column(name = "user_id")
