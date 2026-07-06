@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.5</version>
+        <version>${project.springBootVersion!"3.2.5"}</version>
         <relativePath/>
     </parent>
 
@@ -20,7 +20,7 @@
     <description>${project.description!""}</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>${project.javaVersion!"17"}</java.version>
     </properties>
 
     <dependencies>
@@ -197,8 +197,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>${r"${java.version}"}</source>
+                    <target>${r"${java.version}"}</target>
                 </configuration>
             </plugin>
 

@@ -42,6 +42,26 @@ public class ProjectMapper {
         project.setPackageName(req.getPackageName());
         project.setSecurityEnabled(req.isSecurityEnabled());
 
+        // Map database type
+        if (req.getDatabaseType() != null && !req.getDatabaseType().isBlank()) {
+            try {
+                project.setDatabaseType(com.user.driven.operations.enums.DatabaseType.valueOf(req.getDatabaseType().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Default to H2 if invalid
+                project.setDatabaseType(com.user.driven.operations.enums.DatabaseType.H2);
+            }
+        }
+
+        // Map Java version
+        if (req.getJavaVersion() != null && !req.getJavaVersion().isBlank()) {
+            project.setJavaVersion(req.getJavaVersion());
+        }
+
+        // Map Spring Boot version
+        if (req.getSpringBootVersion() != null && !req.getSpringBootVersion().isBlank()) {
+            project.setSpringBootVersion(req.getSpringBootVersion());
+        }
+
         // Map security type string to enum
         if (req.getSecurityType() != null && !req.getSecurityType().isBlank()) {
             try {
